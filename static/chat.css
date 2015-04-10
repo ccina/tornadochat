@@ -1,0 +1,75 @@
+#chatcontain{
+    height: 600px;
+    width: 450px;
+    overflow-y: auto;
+    margin: 20px auto;
+    background: white;
+    cursor: initial;
+}
+
+#contactcontain{
+    height: 600px;
+    width: 260px;
+    overflow-y: auto;
+    margin: 20px auto;
+    background: white;
+    cursor: initial;
+}
+
+#inputcontain{
+    width: 450px;
+    margin: 20px auto;
+    cursor: initial;
+}
+
+.chatitem.l{
+    padding: 10px;
+    margin: 10px;
+    border-bottom: 3px solid #EEE;
+    text-align: right;
+}
+
+input[name='inp']{
+    width: 350px;
+    height: 35px;
+    margin: 0px 20px;
+}
+
+#sendmsg{
+    float: right;
+    font-size: 1.6em;
+    background: #DDD;
+    cursor: pointer;
+    border-radius: 5px;
+    border: #DDD solid 2px;
+}
+
+#contain{
+    width: 500px;
+    height: 700px;
+    position: fixed;
+    top:20px;
+    left: 35%;
+    padding-top: 30px;
+    background: #eee;
+    cursor: pointer;
+}
+
+#contact{
+    width: 300px;
+    height: 700px;
+    position: fixed;
+    top:20px;
+    left: 35%;
+    padding-top: 30px;
+    background: #eee;
+    cursor: pointer;
+}
+
+.chatcont{
+    display: none;
+}
+
+.chatcont.cur{
+    display: initial;
+}
