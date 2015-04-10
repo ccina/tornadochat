@@ -29,6 +29,20 @@
     text-align: right;
 }
 
+.chatitem{
+    padding: 10px;
+    margin: 10px;
+    border-bottom: 3px solid #EEE;
+    text-align: left;
+}
+
+.contactitem{
+    padding: 10px;
+    margin: 10px;
+    border-bottom: 3px solid #EEE;
+    cursor: pointer;
+}
+
 input[name='inp']{
     width: 350px;
     height: 35px;
