@@ -1,4 +1,6 @@
 $(function(){
+    var curu = "curuser";
+
     function chatH(){
         return $("#contain").outerHeight()-130;
     }
@@ -7,6 +9,7 @@ $(function(){
         msgtxt = $.trim(msgtxt);
         if(msgtxt){
             $(".chatcont.cur").append($("<div>").append(msgtxt).addClass("chatitem l"));
+            webSock.send(JSON.stringify({"type":"msg", "to":curu, "msg":msgtxt}));
             if($(".chatcont.cur").outerHeight(true) > chatH()){
                 $("#chatcontain").scrollTop($(".chatcont.cur").outerHeight(true)-chatH());
             }
@@ -16,8 +19,13 @@ $(function(){
     var cflag = false;
 
     $("#contact").mousedown(function(ev){
-
-    })
+        var oPos = $(this).offset();
+        if(ev.target === this){
+            $(document).mousemove(function(eve){
+                $("#contact").css({top:(oPos.top+eve.pageY-ev.pageY), left:(oPos.left+eve.pageX-ev.pageX)});
+            });
+        }
+    });
 
     $("#contain").mousedown(function(ev){
         var os = $(this).offset();
@@ -79,4 +87,63 @@ $(function(){
         }
         $(document).unbind('mousemove');
     });
+
+    $(".contactitem").click(function(){
+        $("#chattitle").text($(this).text());
+        var chatcont = $(this).data("chatcont");
+        $(".chatcont").removeClass("cur");
+        if(chatcont){
+            chatcont.addClass("cur");
+            if($(".chatcont.cur").outerHeight(true) > chatH()){
+                $("#chatcontain").scrollTop($(".chatcont.cur").outerHeight(true)-chatH());
+            }
+            $(this).removeClass("onmsg");
+        }else{
+            var curchatcont = $("<div>").addClass("chatcont cur");
+            $("#chatcontain").append(curchatcont);
+            $(this).data("chatcont", curchatcont);
+        }
+    });
+
+    var webSock = new WebSocket("");
+
+    webSock.onmessage = function(ev){
+        var data = ev.data;
+        data = JSON.parse(data); //{"type":"msg", "from":"user", "msg":"msg text"}
+        if(data["type"]==="msg"){
+            var ulist = $("#contactcontent").data("user");
+            var tar = ulist[data["form"]];
+            tar.addClass("onmsg");
+            tar.append($("<div>").append(data["msg"]).addClass("chatitem wd"));
+        }
+    };
+
+    $("input[name='inp']").focusin(function(){
+        $(".chatcont.cur").find(".wd").removeClass("wd");
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 });

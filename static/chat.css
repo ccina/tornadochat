@@ -73,3 +73,28 @@ input[name='inp']{
 .chatcont.cur{
     display: block;
 }
+
+#tpos{
+    height: 0px;
+    position: relative;
+}
+
+#chattitle{
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+    left:30px;
+    position: absolute;
+}
+
+.wd, .onmsg{
+    background-color: #FFD9D2;
+}
+
+
+
+
+
+
+
+
