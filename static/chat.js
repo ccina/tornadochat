@@ -1,5 +1,14 @@
 $(function(){
-    var curu = "curuser";
+    var webSock = new WebSocket("ws://localhost:8888/pullMsg");
+
+    var curu;
+
+    $("#auth").keypress(function(ev){
+        if(ev.keyCode==13){
+            ev.preventDefault();
+            webSock.send(JSON.stringify({"type":"auth", "uid":$(this).val()}));//{"type":"auth", "uid":cc}
+        }
+    });
 
     function chatH(){
         return $("#contain").outerHeight()-130;
@@ -7,9 +16,9 @@ $(function(){
     $("#sendmsg").click(function(){
         var msgtxt = $("#inputcontain").find("input[name='inp']").val();
         msgtxt = $.trim(msgtxt);
-        if(msgtxt){
+        if(msgtxt&&curu){
             $(".chatcont.cur").append($("<div>").append(msgtxt).addClass("chatitem l"));
-            webSock.send(JSON.stringify({"type":"msg", "to":curu, "msg":msgtxt}));
+            webSock.send(JSON.stringify({"type":"msg", "to":$("#chattitle").text(), "msg":msgtxt}));
             if($(".chatcont.cur").outerHeight(true) > chatH()){
                 $("#chatcontain").scrollTop($(".chatcont.cur").outerHeight(true)-chatH());
             }
@@ -88,7 +97,7 @@ $(function(){
         $(document).unbind('mousemove');
     });
 
-    $(".contactitem").click(function(){
+    $("#contact").delegate(".contactitem", "click", function(){
         $("#chattitle").text($(this).text());
         var chatcont = $(this).data("chatcont");
         $(".chatcont").removeClass("cur");
@@ -105,16 +114,43 @@ $(function(){
         }
     });
 
-    var webSock = new WebSocket("");
-
     webSock.onmessage = function(ev){
         var data = ev.data;
-        data = JSON.parse(data); //{"type":"msg", "from":"user", "msg":"msg text"}
+        console.log(data);
+        data = JSON.parse(data); //{"msg": "i love you too!", "from": "nana", "type": "msg"}
         if(data["type"]==="msg"){
             var ulist = $("#contactcontent").data("user");
-            var tar = ulist[data["form"]];
+            var tar = ulist[data["from"]];
             tar.addClass("onmsg");
-            tar.append($("<div>").append(data["msg"]).addClass("chatitem wd"));
+            tar.data("chatcont").append($("<div>").append(data["msg"]).addClass("chatitem wd"));
+        }else if(data["type"]==="contactref"){
+            if(data["uid"] !== curu){
+                if(data["action"] === "add"){//{"action": "add", "type": "contactref", "uid": "nana"}
+                    var item = $("<div>").append(data["uid"]).addClass("contactitem");
+                    $("#contactcontent").append(item);
+                    var ulist = $("#contactcontent").data("user");
+                    ulist[data["uid"]] = item;
+
+                    var curchatcont = $("<div>").addClass("chatcont");
+                    $("#chatcontain").append(curchatcont);
+                    item.data("chatcont", curchatcont);
+
+                }else if(data["action"] === "rm"){
+                    var ulist = $("#contactcontent").data("user");
+                    ulist[data["uid"]].remove();
+                }
+            }
+        }else if(data["type"]==="authstat"){
+            if(data["stat"]===0){
+                $("#auth").siblings('div').remove();
+                $("#auth").val("");
+                $("#auth").after($("<div>").append("invalid").css("color", "red"));
+            }else{//{"stat": 1, "type": "authstat"}
+                curu = $("#auth").val();
+                $("#auth").css("display", "none");
+                $("#auth").siblings('div').remove();
+                $("#auth").after($("<div>").append("forever: "+$("#auth").val()));
+            }
         }
     };
 
@@ -122,28 +158,6 @@ $(function(){
         $(".chatcont.cur").find(".wd").removeClass("wd");
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    $("#contactcontent").data("user", {});
 });
+
